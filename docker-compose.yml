@@ -1,33 +1,13 @@
 services:
-  backend:
-    build: 
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: nu-nav-backend
-    restart: always
-    environment:
-      - PORT=3000
-      - DATABASE_URL=file:./dev.db
-      - JWT_SECRET=your_super_secure_jwt_secret_change_me
-    volumes:
-      # 持久化数据库文件
-      - ./data:/app/prisma
-    networks:
-      - nu-nav-net
-
-  frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    container_name: nu-nav-frontend
+  nu-nav:
+    image: sailong/nu-nav:latest
+    container_name: nu-nav
     restart: always
     ports:
       - "80:80"
-    depends_on:
-      - backend
-    networks:
-      - nu-nav-net
-
-networks:
-  nu-nav-net:
-    driver: bridge
+    volumes:
+      # 持久化数据目录
+      - ./nu-nav-data:/app/backend/prisma
+        environment:
+          - DATABASE_URL=file:/app/backend/prisma/dev.db
+    
