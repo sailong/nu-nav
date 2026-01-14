@@ -24,6 +24,9 @@ RUN npm ci --omit=dev
 # --------------------------------------------------------
 FROM public.ecr.aws/docker/library/node:20-alpine
 
+# 安装 OpenSSL 以支持 Prisma Client
+RUN apk add --no-cache openssl
+
 WORKDIR /app
 
 # 设置环境变量
