@@ -27,6 +27,22 @@ const Home = () => {
       ]);
       setCategories(catsRes.data);
       setSettings(settingsRes.data);
+      
+      const title = settingsRes.data.systemTitle || 'Nu-Nav';
+      document.title = title;
+
+      // Update Favicon
+      if (settingsRes.data.faviconUrl) {
+        const link = document.querySelector("link[rel~='icon']");
+        if (link) {
+            link.href = settingsRes.data.faviconUrl;
+        } else {
+            const newLink = document.createElement('link');
+            newLink.rel = 'icon';
+            newLink.href = settingsRes.data.faviconUrl;
+            document.head.appendChild(newLink);
+        }
+      }
     } catch (error) {
       console.error('Failed to fetch data', error);
     }
@@ -46,6 +62,7 @@ const Home = () => {
   }).filter(cat => cat.tags.length > 0);
 
   const bgImage = settings.backgroundImage || 'https://images.unsplash.com/photo-1477346611705-65d1883cee1e?auto=format&fit=crop&q=80&w=2070';
+  const systemTitle = settings.systemTitle || 'Nu-Nav';
 
   return (
     <div 
@@ -59,8 +76,10 @@ const Home = () => {
       <div className="relative z-10 w-full max-w-[1600px] mx-auto flex flex-col flex-1">
         <header className="flex justify-between items-center px-6 py-6 md:px-12">
             <h1 className="text-3xl font-bold text-white tracking-tight drop-shadow-lg flex items-center gap-2">
-               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-xl">N</div>
-               Nu-Nav
+               <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-xl uppercase">
+                  {systemTitle.charAt(0)}
+               </div>
+               {systemTitle}
             </h1>
             <a 
               href="https://github.com/sailong/nu-nav" 

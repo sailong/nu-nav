@@ -16,4 +16,22 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
+// Add a response interceptor
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      // Token is invalid or expired
+      localStorage.removeItem('token');
+      // Optional: Redirect to login or dispatch an event
+      // Since we are not in a React component, we can't use useNavigate easily.
+      // We'll rely on the UI to handle the logged-out state or force a reload.
+      if (window.location.pathname !== '/login') {
+          window.location.href = '/login';
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export default api;

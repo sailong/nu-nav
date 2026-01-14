@@ -20,18 +20,39 @@ router.get('/', async (req, res) => {
   }
 });
 
-// Update Setting (Protected)
+// Update Setting (Protected) - Supports single object or array of objects
 router.post('/', authenticateToken, async (req, res) => {
-  const { key, value } = req.body;
+  const body = req.body;
+  
   try {
+    // Handle Batch Update
+    if (Array.isArray(body)) {
+      console.log('Processing batch update for:', body.length, 'items');
+      // Use sequential execution with a loop to avoid SQLite concurrency/locking issues completely
+      for (const item of body) {
+        if (!item.key) continue;
+        await prisma.setting.upsert({
+          where: { id: item.key },
+          update: { value: item.value || '' }, 
+          create: { id: item.key, value: item.value || '' },
+        });
+      }
+      return res.json({ message: 'Settings updated successfully' });
+    }
+
+    // Handle Single Update
+    const { key, value } = body;
+    if (!key) return res.status(400).json({ error: 'Key is required' });
+    
     const setting = await prisma.setting.upsert({
       where: { id: key },
-      update: { value },
-      create: { id: key, value },
+      update: { value: value || '' },
+      create: { id: key, value: value || '' },
     });
     res.json(setting);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Settings update error:', error);
+    res.status(500).json({ error: 'Database operation failed: ' + error.message });
   }
 });
 
