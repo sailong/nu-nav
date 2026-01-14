@@ -1,6 +1,6 @@
 services:
   nu-nav:
-    image: sailong/nu-nav:latest
+    image: simonchang/nu-nav:latest
     container_name: nu-nav
     restart: always
     ports:
