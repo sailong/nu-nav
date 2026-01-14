@@ -27,12 +27,14 @@ router.post('/login', async (req, res) => {
 // Change Password
 router.post('/change-password', authenticateToken, async (req, res) => {
   const { currentPassword, newPassword } = req.body;
-  const userId = req.user.id;
+  const userId = parseInt(req.user.id);
 
   try {
     const user = await prisma.user.findUnique({ where: { id: userId } });
+    if (!user) return res.status(404).json({ error: '用户不存在' });
+
     const validPassword = await bcrypt.compare(currentPassword, user.password);
-    if (!validPassword) return res.status(400).json({ error: 'Invalid current password' });
+    if (!validPassword) return res.status(400).json({ error: '当前密码错误' });
 
     const hashedPassword = await bcrypt.hash(newPassword, 10);
     await prisma.user.update({
@@ -40,9 +42,10 @@ router.post('/change-password', authenticateToken, async (req, res) => {
       data: { password: hashedPassword },
     });
 
-    res.json({ message: 'Password updated successfully' });
+    res.json({ message: '密码修改成功' });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error('Password change error:', error);
+    res.status(500).json({ error: '服务器内部错误' });
   }
 });
 

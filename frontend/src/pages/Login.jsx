@@ -9,6 +9,10 @@ const Login = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
+  React.useEffect(() => {
+    document.title = '登录 | Nu-Nav 管理后台';
+  }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

@@ -1,11 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import api from '../../api';
 import { LayoutDashboard, Layers, Tags, Settings, LogOut } from 'lucide-react';
 
 const AdminLayout = () => {
   const { logout } = useAuth();
   const navigate = useNavigate();
+  const [title, setTitle] = useState('Nu-Nav');
+
+  useEffect(() => {
+    const fetchTitle = async () => {
+      try {
+        const res = await api.get('/settings');
+        const systemTitle = res.data.systemTitle || 'Nu-Nav';
+        setTitle(systemTitle);
+        document.title = `${systemTitle} | 管理后台`;
+      } catch (err) {
+        document.title = 'Nu-Nav | 管理后台';
+      }
+    };
+    fetchTitle();
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -24,7 +40,7 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-gray-800 border-r border-gray-700 flex flex-col">
         <div className="p-6 border-b border-gray-700">
-          <h1 className="text-xl font-bold tracking-wider text-white">Nu-Nav 管理后台</h1>
+          <h1 className="text-xl font-bold tracking-wider text-white truncate">{title} 管理后台</h1>
         </div>
         
         <nav className="flex-1 p-4 space-y-2">

@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../api';
+import { useAuth } from '../../context/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
 const Settings = () => {
   const [backgroundImage, setBackgroundImage] = useState('');
@@ -7,6 +9,12 @@ const Settings = () => {
   const [faviconUrl, setFaviconUrl] = useState('');
   const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [message, setMessage] = useState({ type: '', text: '' });
+  
+  const [loading, setLoading] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  
+  const { logout } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchSettings();
@@ -25,6 +33,7 @@ const Settings = () => {
 
   const handleGeneralSave = async (e) => {
     e.preventDefault();
+    setLoading(true);
     try {
       // Send batch update to reduce connections and avoid locks
       await api.post('/settings', [
@@ -38,6 +47,8 @@ const Settings = () => {
       console.error(error);
       const errMsg = error.response?.data?.error || '更新设置失败';
       showMessage('error', errMsg);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,15 +58,41 @@ const Settings = () => {
       showMessage('error', '两次输入的新密码不一致');
       return;
     }
+    
+    if (passwordData.currentPassword === passwordData.newPassword) {
+      showMessage('error', '新密码不能与当前密码相同');
+      return;
+    }
+    
+    setPasswordLoading(true);
     try {
       await api.post('/auth/change-password', {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       });
-      showMessage('success', '密码修改成功');
+      
+      // Success logic: Clear token, show message, and redirect
+      setMessage({ type: 'success', text: '密码修改成功，正在跳转登录页...' });
+      setTimeout(() => {
+        logout();
+        navigate('/login');
+      }, 2000);
+      
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (error) {
-      showMessage('error', error.response?.data?.error || '密码修改失败');
+      console.error('Password change failed:', error);
+      let errMsg = '密码修改失败';
+      
+      if (error.response && error.response.data && error.response.data.error) {
+          // Backend returned specific error message
+          errMsg = error.response.data.error;
+      } else if (error.message) {
+          // Network or other client-side error
+          errMsg = error.message;
+      }
+      
+      showMessage('error', errMsg);
+      setPasswordLoading(false); 
     }
   };
 
@@ -65,11 +102,15 @@ const Settings = () => {
   };
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-4xl relative">
       <h2 className="text-2xl font-bold text-white mb-8">系统设置</h2>
 
       {message.text && (
-        <div className={`p-4 rounded-lg mb-6 ${message.type === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
+        <div className={`fixed top-12 left-1/2 -translate-x-1/2 z-50 px-8 py-4 rounded-2xl shadow-2xl backdrop-blur-xl border animate-fade-in-up flex items-center gap-3 min-w-[300px] justify-center text-center ${
+          message.type === 'success' 
+            ? 'bg-green-500/90 text-white border-green-400/30' 
+            : 'bg-red-500/90 text-white border-red-400/30'
+        }`}>
           {message.text}
         </div>
       )}
@@ -128,9 +169,10 @@ const Settings = () => {
             )}
             <button 
               type="submit"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
+              disabled={loading}
+              className={`bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors flex items-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-              保存基本设置
+              {loading ? '保存中...' : '保存基本设置'}
             </button>
           </form>
         </section>
@@ -171,9 +213,10 @@ const Settings = () => {
             </div>
             <button 
               type="submit"
-              className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors mt-2"
+              disabled={passwordLoading}
+              className={`bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors mt-2 flex items-center gap-2 ${passwordLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
-              修改密码
+              {passwordLoading ? '处理中...' : '修改密码'}
             </button>
           </form>
         </section>
