@@ -8,6 +8,7 @@ import AdminLayout from './pages/admin/Layout';
 import Dashboard from './pages/admin/Dashboard';
 import Categories from './pages/admin/Categories';
 import Tags from './pages/admin/Tags';
+import SearchEngines from './pages/admin/SearchEngines';
 import Settings from './pages/admin/Settings';
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
               <Route index element={<Dashboard />} />
               <Route path="categories" element={<Categories />} />
               <Route path="tags" element={<Tags />} />
+              <Route path="search-engines" element={<SearchEngines />} />
               <Route path="settings" element={<Settings />} />
             </Route>
           </Route>

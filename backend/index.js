@@ -8,6 +8,7 @@ const authRoutes = require('./routes/auth');
 const categoriesRoutes = require('./routes/categories');
 const tagsRoutes = require('./routes/tags');
 const settingsRoutes = require('./routes/settings');
+const searchEnginesRoutes = require('./routes/searchEngines');
 
 const app = express();
 const prisma = new PrismaClient();
@@ -21,6 +22,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/categories', categoriesRoutes);
 app.use('/api/tags', tagsRoutes);
 app.use('/api/settings', settingsRoutes);
+app.use('/api/search-engines', searchEnginesRoutes);
 
 // --- Serve Frontend Static Files (Production) ---
 const frontendPath = path.join(__dirname, '../frontend/dist');

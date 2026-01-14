@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import api from '../../api';
-import { LayoutDashboard, Layers, Tags, Settings, LogOut } from 'lucide-react';
+import { LayoutDashboard, Layers, Tags, Settings, LogOut, Search } from 'lucide-react';
 
 const AdminLayout = () => {
   const { logout } = useAuth();
@@ -32,6 +32,7 @@ const AdminLayout = () => {
     { path: '/admin', icon: LayoutDashboard, label: '概览' },
     { path: '/admin/categories', icon: Layers, label: '分类管理' },
     { path: '/admin/tags', icon: Tags, label: '标签管理' },
+    { path: '/admin/search-engines', icon: Search, label: '搜索设置' },
     { path: '/admin/settings', icon: Settings, label: '系统设置' },
   ];
 

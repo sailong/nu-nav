@@ -55,4 +55,4 @@ RUN npx prisma generate
 EXPOSE 80
 
 # 启动命令：迁移 -> 种子数据 -> 启动 Node
-CMD ["sh", "-c", "npx prisma migrate deploy && node seed.js && node index.js"]
+CMD ["sh", "-c", "npx prisma migrate deploy --schema ./prisma/schema.prisma && node seed.js && node index.js"]

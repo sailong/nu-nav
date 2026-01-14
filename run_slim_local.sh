@@ -16,9 +16,9 @@ cd ..
 echo -e "\n${GREEN}=== 正在准备后端 (Backend Setup)... ===${NC}"
 cd backend
 npm install
-npx prisma generate
+npx prisma generate --schema ./prisma/schema.prisma
 # 确保数据库是最新的
-npx prisma migrate deploy
+npx prisma migrate deploy --schema ./prisma/schema.prisma
 # 尝试播种数据 (如果已存在会跳过)
 node seed.js
 

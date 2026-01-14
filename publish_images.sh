@@ -7,11 +7,10 @@ PROJECT_NAME="nu-nav"
 PLATFORMS="linux/amd64,linux/arm64"
 # ===========================================
 
-GREE N='\033[0;32m'
+GREEN='\033[0;32m'
 NC='\033[0m'
 
 echo -e "${GREEN}=== 开始构建并推送 Docker 镜像 ===${NC}"
-
 # --- 0. 选择构建版本 ---
 echo -e "\n请选择要构建的版本："
 echo "1) 标准版 (Standard)"
@@ -54,17 +53,31 @@ if ! docker buildx inspect $BUILDER_NAME > /dev/null 2>&1; then
 else
     docker buildx use $BUILDER_NAME
 fi
-
 # --- 2. 登录检查 ---
 echo -e "\n${GREEN}>> 检查 Docker 登录状态...${NC}"
 echo "预期上传至: ${NAMESPACE}"
-read -p "是否使用当前 Docker 登录凭证？(y/n) " LOGIN_CONFIRM
-if [[ "$LOGIN_CONFIRM" != "y" && "$LOGIN_CONFIRM" != "Y" ]]; then
-    echo "执行重新登录..."
-    docker logout $REGISTRY
+# 获取当前登录的 Docker 用户名
+CURRENT_USER=$(docker info --format '{{.RegistryConfig.IndexConfigs."docker.io".Username}}' 2>/dev/null)
+
+if [ -z "$CURRENT_USER" ] || [ "$CURRENT_USER" == "<nil>" ]; then
+    echo "当前未检测到 Docker 登录状态。"
     docker login $REGISTRY
 else
-    echo "保持当前登录状态..."
+    echo -e "当前已登录用户: ${GREEN}${CURRENT_USER}${NC}"
+    echo -e "脚本预期命名空间: ${GREEN}${NAMESPACE}${NC}"
+    
+    if [ "$CURRENT_USER" != "$NAMESPACE" ]; then
+        echo -e "⚠️  ${GREEN}注意：当前登录用户与预期命名空间不一致！${NC}"
+    fi
+
+    read -p "是否使用当前账号继续？(y/n) " LOGIN_CONFIRM
+    if [[ "$LOGIN_CONFIRM" != "y" && "$LOGIN_CONFIRM" != "Y" ]]; then
+        echo "执行重新登录..."
+        docker logout $REGISTRY
+        docker login $REGISTRY
+    else
+        echo "保持当前登录状态..."
+    fi
 fi
 
 # --- 3. 构建并推送 ---
@@ -92,4 +105,4 @@ echo -e "\n${GREEN}=== 🎉 镜像构建并推送成功！ ===${NC}"
 echo "镜像地址: $IMAGE_NAME"
 echo "架构支持: $PLATFORMS"
 echo -e "\n您可以运行以下命令启动服务:"
-echo "docker run -d -p 80:80 -v $(pwd)/nu-nav-data:/app/backend/prisma -e DATABASE_URL=file:/app/backend/prisma/dev.db $IMAGE_NAME"
+echo "docker run -d -p 3000:80 -v $(pwd)/data:/app/data -e DATABASE_URL=file:/app/data/dev.db $IMAGE_NAME"

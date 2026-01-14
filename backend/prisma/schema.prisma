@@ -39,3 +39,14 @@ model Setting {
   id    String @id // Use key as ID for simple key-value store
   value String
 }
+
+model SearchEngine {
+  id          Int      @id @default(autoincrement())
+  name        String   @unique
+  url         String   // URL template, e.g., "https://google.com/search?q="
+  icon        String?  // Optional icon/logo
+  placeholder String?  
+  sortOrder   Int      @default(0)
+  isDefault   Boolean  @default(false)
+  createdAt   DateTime @default(now())
+}

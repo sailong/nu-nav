@@ -1,33 +1,48 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Search, Globe, X } from 'lucide-react';
-
-const ENGINES = [
-  { name: '站内', url: null, placeholder: '搜索书签...', color: 'blue' },
-  { name: 'Google', url: 'https://www.google.com/search?q=', placeholder: 'Google 搜索', color: 'red' },
-  { name: 'Bing', url: 'https://www.bing.com/search?q=', placeholder: 'Bing 搜索', color: 'teal' },
-  { name: '百度', url: 'https://www.baidu.com/s?wd=', placeholder: '百度一下', color: 'blue' },
-];
+import api from '../api';
 
 const SearchBar = ({ onLocalSearch }) => {
-  const [engine, setEngine] = useState(ENGINES[0]);
+  const [engines, setEngines] = useState([]);
+  const [engine, setEngine] = useState(null);
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
 
+  useEffect(() => {
+    fetchEngines();
+  }, []);
+
+  const fetchEngines = async () => {
+    try {
+      const res = await api.get('/search-engines');
+      setEngines(res.data);
+      // Set default engine
+      const def = res.data.find(e => e.isDefault) || res.data[0];
+      setEngine(def);
+    } catch (err) {
+      console.error('Failed to load search engines');
+    }
+  };
+
   const handleSearch = (e) => {
     e.preventDefault();
-    if (!query.trim()) return;
+    if (!query.trim() || !engine) return;
 
-    if (engine.name === '站内') {
+    if (engine.url === 'local') {
       onLocalSearch(query);
     } else {
-      window.open(engine.url + encodeURIComponent(query), '_blank');
+      // Support %s or just append
+      const url = engine.url.includes('%s') 
+        ? engine.url.replace('%s', encodeURIComponent(query))
+        : engine.url + encodeURIComponent(query);
+      window.open(url, '_blank');
     }
   };
 
   const handleChange = (e) => {
     const val = e.target.value;
     setQuery(val);
-    if (engine.name === '站内') {
+    if (engine && engine.url === 'local') {
       onLocalSearch(val);
     }
   };
@@ -37,18 +52,20 @@ const SearchBar = ({ onLocalSearch }) => {
     onLocalSearch('');
   };
 
+  if (!engine) return null;
+
   return (
     <div className={`w-full max-w-3xl mx-auto mb-12 transition-all duration-500 transform ${isFocused ? 'scale-[1.02]' : 'scale-100'}`}>
-      <div className="flex justify-center gap-2 mb-4">
-        {ENGINES.map((eng) => (
+      <div className="flex justify-center gap-2 mb-4 flex-wrap">
+        {engines.map((eng) => (
           <button
-            key={eng.name}
+            key={eng.id}
             onClick={() => {
                 setEngine(eng);
-                if (eng.name === '站内') onLocalSearch(query);
+                if (eng.url === 'local') onLocalSearch(query);
             }}
             className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 ${
-              engine.name === eng.name 
+              engine.id === eng.id 
               ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/30' 
               : 'bg-white/10 text-white/60 hover:bg-white/20'
             }`}
@@ -65,7 +82,7 @@ const SearchBar = ({ onLocalSearch }) => {
         <input
           type="text"
           className="block w-full pl-14 pr-12 py-4 border-none rounded-2xl shadow-2xl bg-white/10 backdrop-blur-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all duration-300 border border-white/10"
-          placeholder={engine.placeholder}
+          placeholder={engine.placeholder || '搜索...'}
           value={query}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
