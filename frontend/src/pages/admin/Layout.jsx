@@ -13,10 +13,10 @@ const AdminLayout = () => {
   };
 
   const navItems = [
-    { path: '/admin', icon: LayoutDashboard, label: 'Overview' },
-    { path: '/admin/categories', icon: Layers, label: 'Categories' },
-    { path: '/admin/tags', icon: Tags, label: 'Tags' },
-    { path: '/admin/settings', icon: Settings, label: 'Settings' },
+    { path: '/admin', icon: LayoutDashboard, label: '概览' },
+    { path: '/admin/categories', icon: Layers, label: '分类管理' },
+    { path: '/admin/tags', icon: Tags, label: '标签管理' },
+    { path: '/admin/settings', icon: Settings, label: '系统设置' },
   ];
 
   return (
@@ -24,7 +24,7 @@ const AdminLayout = () => {
       {/* Sidebar */}
       <aside className="w-64 bg-gray-800 border-r border-gray-700 flex flex-col">
         <div className="p-6 border-b border-gray-700">
-          <h1 className="text-xl font-bold tracking-wider text-white">Nu-Nav Admin</h1>
+          <h1 className="text-xl font-bold tracking-wider text-white">Nu-Nav 管理后台</h1>
         </div>
         
         <nav className="flex-1 p-4 space-y-2">
@@ -53,7 +53,7 @@ const AdminLayout = () => {
             className="flex items-center gap-3 px-4 py-3 w-full rounded-lg text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
           >
             <LogOut className="w-5 h-5" />
-            <span className="font-medium">Logout</span>
+            <span className="font-medium">退出登录</span>
           </button>
         </div>
       </aside>

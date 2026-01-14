@@ -25,12 +25,12 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-white mb-8">Dashboard Overview</h2>
+      <h2 className="text-2xl font-bold text-white mb-8">仪表盘概览</h2>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-gray-400 font-medium">Total Categories</h3>
+            <h3 className="text-gray-400 font-medium">分类总数</h3>
             <div className="p-3 bg-blue-500/10 rounded-lg">
               <Layers className="w-6 h-6 text-blue-500" />
             </div>
@@ -40,7 +40,7 @@ const Dashboard = () => {
 
         <div className="bg-gray-800 p-6 rounded-xl border border-gray-700 shadow-lg">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-gray-400 font-medium">Total Tags</h3>
+            <h3 className="text-gray-400 font-medium">标签总数</h3>
             <div className="p-3 bg-green-500/10 rounded-lg">
               <Tags className="w-6 h-6 text-green-500" />
             </div>

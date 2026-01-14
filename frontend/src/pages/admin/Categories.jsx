@@ -46,7 +46,7 @@ const Categories = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this category? All tags in it will be lost.')) {
+    if (window.confirm('确定要删除此分类吗？该分类下的所有标签也将被删除。')) {
       try {
         await api.delete(`/categories/${id}`);
         fetchCategories();
@@ -65,13 +65,13 @@ const Categories = () => {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Categories</h2>
+        <h2 className="text-2xl font-bold text-white">分类管理</h2>
         <button 
           onClick={openNew}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
         >
           <Plus className="w-5 h-5" />
-          Add Category
+          新增分类
         </button>
       </div>
 
@@ -79,9 +79,9 @@ const Categories = () => {
         <table className="w-full text-left">
           <thead className="bg-gray-900/50 text-gray-400">
             <tr>
-              <th className="p-4 font-medium">Name</th>
-              <th className="p-4 font-medium w-32">Sort Order</th>
-              <th className="p-4 font-medium w-48 text-right">Actions</th>
+              <th className="p-4 font-medium">名称</th>
+              <th className="p-4 font-medium w-32">排序</th>
+              <th className="p-4 font-medium w-48 text-right">操作</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-700">
@@ -109,7 +109,7 @@ const Categories = () => {
             ))}
             {categories.length === 0 && (
                 <tr>
-                    <td colSpan="3" className="p-8 text-center text-gray-500">No categories found.</td>
+                    <td colSpan="3" className="p-8 text-center text-gray-500">暂无分类</td>
                 </tr>
             )}
           </tbody>
@@ -119,11 +119,11 @@ const Categories = () => {
       <Modal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)}
-        title={editingId ? 'Edit Category' : 'New Category'}
+        title={editingId ? '编辑分类' : '新增分类'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-gray-400 mb-1.5 text-sm">Name</label>
+            <label className="block text-gray-400 mb-1.5 text-sm">分类名称</label>
             <input 
               type="text" 
               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
@@ -133,7 +133,7 @@ const Categories = () => {
             />
           </div>
           <div>
-            <label className="block text-gray-400 mb-1.5 text-sm">Sort Order</label>
+            <label className="block text-gray-400 mb-1.5 text-sm">排序权重</label>
             <input 
               type="number" 
               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
@@ -147,13 +147,13 @@ const Categories = () => {
               onClick={() => setIsModalOpen(false)}
               className="px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
             >
-              Cancel
+              取消
             </button>
             <button 
               type="submit"
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
             >
-              {editingId ? 'Save Changes' : 'Create Category'}
+              {editingId ? '保存修改' : '立即创建'}
             </button>
           </div>
         </form>

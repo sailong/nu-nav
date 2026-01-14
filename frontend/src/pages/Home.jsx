@@ -63,7 +63,7 @@ const Home = () => {
                Nu-Nav
             </h1>
             <Link to="/login" className="bg-white/10 hover:bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-white/90 text-sm font-medium transition-colors">
-              Admin
+              管理后台
             </Link>
         </header>
 
@@ -71,7 +71,7 @@ const Home = () => {
             {/* Sidebar Navigation */}
             <aside className="hidden md:block w-64 shrink-0">
                <nav className="sticky top-8 space-y-1">
-                  <p className="text-white/40 text-xs font-bold uppercase tracking-widest mb-4 px-3">Categories</p>
+                  <p className="text-white/40 text-xs font-bold uppercase tracking-widest mb-4 px-3">分类导航</p>
                   {filteredCategories.map(cat => (
                     <a 
                       key={cat.id} 
@@ -94,7 +94,7 @@ const Home = () => {
                       <h2 className="text-xl font-semibold text-white mb-6 flex items-center gap-3 drop-shadow-sm">
                         <span className="w-1 h-6 bg-blue-500 rounded-full"></span>
                         {category.name}
-                        <span className="text-white/30 text-xs font-normal ml-2">{category.tags.length} items</span>
+                        <span className="text-white/30 text-xs font-normal ml-2">{category.tags.length} 个项目</span>
                       </h2>
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
                         {category.tags.map(tag => (
@@ -126,12 +126,12 @@ const Home = () => {
                   
                   {filteredCategories.length === 0 && filter && (
                      <div className="text-center py-20 bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10">
-                        <p className="text-white/70 text-lg">No tags found matching "{filter}"</p>
+                        <p className="text-white/70 text-lg">未找到匹配 "{filter}" 的内容</p>
                         <button 
                           onClick={() => setFilter('')}
                           className="mt-4 text-blue-400 hover:text-blue-300 text-sm font-medium underline"
                         >
-                          Clear search
+                          清除搜索
                         </button>
                      </div>
                   )}
@@ -140,7 +140,7 @@ const Home = () => {
         </main>
 
         <footer className="relative z-10 py-8 px-6 text-center text-white/30 text-sm border-t border-white/5 mx-12">
-            &copy; 2026 Nu-Nav Navigation. Built with Speed and Style.
+            &copy; 2026 Nu-Nav 导航系统。极速·极简·极致。
         </footer>
 
         {/* Back to Top Button */}

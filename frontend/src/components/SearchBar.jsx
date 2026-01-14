@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { Search, Globe, X } from 'lucide-react';
 
 const ENGINES = [
-  { name: 'Local', url: null, placeholder: 'Search bookmarks...', color: 'blue' },
-  { name: 'Google', url: 'https://www.google.com/search?q=', placeholder: 'Search with Google', color: 'red' },
-  { name: 'Bing', url: 'https://www.bing.com/search?q=', placeholder: 'Search with Bing', color: 'teal' },
-  { name: 'Baidu', url: 'https://www.baidu.com/s?wd=', placeholder: '百度一下', color: 'blue' },
+  { name: '站内', url: null, placeholder: '搜索书签...', color: 'blue' },
+  { name: 'Google', url: 'https://www.google.com/search?q=', placeholder: 'Google 搜索', color: 'red' },
+  { name: 'Bing', url: 'https://www.bing.com/search?q=', placeholder: 'Bing 搜索', color: 'teal' },
+  { name: '百度', url: 'https://www.baidu.com/s?wd=', placeholder: '百度一下', color: 'blue' },
 ];
 
 const SearchBar = ({ onLocalSearch }) => {
@@ -17,7 +17,7 @@ const SearchBar = ({ onLocalSearch }) => {
     e.preventDefault();
     if (!query.trim()) return;
 
-    if (engine.name === 'Local') {
+    if (engine.name === '站内') {
       onLocalSearch(query);
     } else {
       window.open(engine.url + encodeURIComponent(query), '_blank');
@@ -27,7 +27,7 @@ const SearchBar = ({ onLocalSearch }) => {
   const handleChange = (e) => {
     const val = e.target.value;
     setQuery(val);
-    if (engine.name === 'Local') {
+    if (engine.name === '站内') {
       onLocalSearch(val);
     }
   };
@@ -45,7 +45,7 @@ const SearchBar = ({ onLocalSearch }) => {
             key={eng.name}
             onClick={() => {
                 setEngine(eng);
-                if (eng.name === 'Local') onLocalSearch(query);
+                if (eng.name === '站内') onLocalSearch(query);
             }}
             className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-300 ${
               engine.name === eng.name 

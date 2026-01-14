@@ -80,5 +80,44 @@ npm run dev
 - **默认账号**: `admin`
 - **默认密码**: `admin123`
 
+## 🐳 Docker 部署 (推荐)
+
+本项目支持 Docker 一键部署，完美兼容 x86 (AMD64) 和 ARM64 (Apple Silicon, Raspberry Pi) 架构。
+
+### 1. 启动服务
+
+在项目根目录下运行：
+
+```bash
+docker-compose up -d --build
+```
+
+系统会自动：
+1. 构建前端静态资源。
+2. 构建后端服务。
+3. 初始化数据库并执行迁移。
+4. 启动 Nginx 反向代理。
+
+### 2. 访问
+
+直接访问：`http://localhost`
+
+### 3. 数据持久化
+
+所有数据（SQLite 数据库文件）将保存在项目根目录下的 `./data` 文件夹中。请勿删除此文件夹，否则数据将丢失。
+
+### 4. 常用管理命令
+
+```bash
+# 查看日志
+docker-compose logs -f
+
+# 停止服务
+docker-compose down
+
+# 重启并重新构建
+docker-compose up -d --build
+```
+
 ## 📄 开源协议
 ISC License

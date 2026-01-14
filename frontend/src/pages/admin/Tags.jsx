@@ -59,7 +59,7 @@ const Tags = () => {
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Are you sure you want to delete this tag?')) {
+    if (window.confirm('确定要删除此标签吗？')) {
       try {
         await api.delete(`/tags/${id}`);
         fetchData();
@@ -81,18 +81,18 @@ const Tags = () => {
     setIsModalOpen(true);
   };
 
-  const getCategoryName = (id) => categories.find(c => c.id === id)?.name || 'Unknown';
+  const getCategoryName = (id) => categories.find(c => c.id === id)?.name || '未知';
 
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-white">Tags</h2>
+        <h2 className="text-2xl font-bold text-white">标签管理</h2>
         <button 
           onClick={openNew}
           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg flex items-center gap-2 transition-colors"
         >
           <Plus className="w-5 h-5" />
-          Add Tag
+          新增标签
         </button>
       </div>
 
@@ -100,11 +100,11 @@ const Tags = () => {
         <table className="w-full text-left">
           <thead className="bg-gray-900/50 text-gray-400">
             <tr>
-              <th className="p-4 font-medium">Logo</th>
-              <th className="p-4 font-medium">Name</th>
-              <th className="p-4 font-medium">Category</th>
-              <th className="p-4 font-medium">URL</th>
-              <th className="p-4 font-medium w-48 text-right">Actions</th>
+              <th className="p-4 font-medium">图标</th>
+              <th className="p-4 font-medium">名称</th>
+              <th className="p-4 font-medium">所属分类</th>
+              <th className="p-4 font-medium">链接</th>
+              <th className="p-4 font-medium w-48 text-right">操作</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-700">
@@ -147,7 +147,7 @@ const Tags = () => {
             ))}
              {tags.length === 0 && (
                 <tr>
-                    <td colSpan="5" className="p-8 text-center text-gray-500">No tags found.</td>
+                    <td colSpan="5" className="p-8 text-center text-gray-500">暂无标签</td>
                 </tr>
             )}
           </tbody>
@@ -157,26 +157,26 @@ const Tags = () => {
       <Modal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)}
-        title={editingId ? 'Edit Tag' : 'New Tag'}
+        title={editingId ? '编辑标签' : '新增标签'}
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
-                <label className="block text-gray-400 mb-1.5 text-sm">Category</label>
+                <label className="block text-gray-400 mb-1.5 text-sm">所属分类</label>
                 <select
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 appearance-none"
                 value={formData.categoryId}
                 onChange={(e) => setFormData({...formData, categoryId: e.target.value})}
                 required
                 >
-                <option value="" disabled>Select a category</option>
+                <option value="" disabled>请选择分类</option>
                 {categories.map(cat => (
                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                 ))}
                 </select>
             </div>
             <div className="col-span-2 md:col-span-1">
-                <label className="block text-gray-400 mb-1.5 text-sm">Name</label>
+                <label className="block text-gray-400 mb-1.5 text-sm">标签名称</label>
                 <input 
                 type="text" 
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
@@ -186,7 +186,7 @@ const Tags = () => {
                 />
             </div>
             <div className="col-span-2 md:col-span-1">
-                <label className="block text-gray-400 mb-1.5 text-sm">Sort Order</label>
+                <label className="block text-gray-400 mb-1.5 text-sm">排序权重</label>
                 <input 
                 type="number" 
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
@@ -197,7 +197,7 @@ const Tags = () => {
           </div>
 
           <div>
-            <label className="block text-gray-400 mb-1.5 text-sm">URL</label>
+            <label className="block text-gray-400 mb-1.5 text-sm">跳转链接</label>
             <input 
               type="url" 
               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
@@ -208,7 +208,7 @@ const Tags = () => {
           </div>
 
           <div>
-            <label className="block text-gray-400 mb-1.5 text-sm">Logo URL</label>
+            <label className="block text-gray-400 mb-1.5 text-sm">Logo 图片链接</label>
             <div className="flex gap-4">
                 <input 
                 type="url" 
@@ -219,7 +219,7 @@ const Tags = () => {
                 />
                 <div className="w-[46px] h-[46px] rounded-lg bg-gray-900 border border-gray-600 flex items-center justify-center shrink-0 overflow-hidden">
                     {formData.logo ? (
-                        <img src={formData.logo} alt="Preview" className="w-full h-full object-cover" />
+                        <img src={formData.logo} alt="预览" className="w-full h-full object-cover" />
                     ) : (
                         <Globe className="w-5 h-5 text-gray-600" />
                     )}
@@ -228,7 +228,7 @@ const Tags = () => {
           </div>
 
           <div>
-            <label className="block text-gray-400 mb-1.5 text-sm">Description</label>
+            <label className="block text-gray-400 mb-1.5 text-sm">描述信息</label>
             <textarea 
               className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500 min-h-[80px]"
               value={formData.description}
@@ -242,13 +242,13 @@ const Tags = () => {
               onClick={() => setIsModalOpen(false)}
               className="px-4 py-2 text-gray-300 hover:text-white hover:bg-gray-700 rounded-lg transition-colors"
             >
-              Cancel
+              取消
             </button>
             <button 
               type="submit"
               className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
             >
-              {editingId ? 'Save Changes' : 'Create Tag'}
+              {editingId ? '保存修改' : '立即创建'}
             </button>
           </div>
         </form>

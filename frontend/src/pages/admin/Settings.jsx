@@ -23,16 +23,16 @@ const Settings = () => {
     e.preventDefault();
     try {
       await api.post('/settings', { key: 'backgroundImage', value: backgroundImage });
-      showMessage('success', 'Background image updated successfully');
+      showMessage('success', '背景图更新成功');
     } catch (error) {
-      showMessage('error', 'Failed to update background');
+      showMessage('error', '更新背景图失败');
     }
   };
 
   const handlePasswordChange = async (e) => {
     e.preventDefault();
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showMessage('error', 'New passwords do not match');
+      showMessage('error', '两次输入的新密码不一致');
       return;
     }
     try {
@@ -40,10 +40,10 @@ const Settings = () => {
         currentPassword: passwordData.currentPassword,
         newPassword: passwordData.newPassword
       });
-      showMessage('success', 'Password changed successfully');
+      showMessage('success', '密码修改成功');
       setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
     } catch (error) {
-      showMessage('error', error.response?.data?.error || 'Failed to change password');
+      showMessage('error', error.response?.data?.error || '密码修改失败');
     }
   };
 
@@ -54,7 +54,7 @@ const Settings = () => {
 
   return (
     <div className="max-w-4xl">
-      <h2 className="text-2xl font-bold text-white mb-8">Settings</h2>
+      <h2 className="text-2xl font-bold text-white mb-8">系统设置</h2>
 
       {message.text && (
         <div className={`p-4 rounded-lg mb-6 ${message.type === 'success' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}`}>
@@ -65,10 +65,10 @@ const Settings = () => {
       <div className="space-y-8">
         {/* Background Image Section */}
         <section className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-4">Appearance</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">外观设置</h3>
           <form onSubmit={handleBgSave} className="max-w-xl">
             <div className="mb-4">
-              <label className="block text-gray-400 mb-2 text-sm">Global Background Image URL</label>
+              <label className="block text-gray-400 mb-2 text-sm">全局背景图片链接</label>
               <input 
                 type="url" 
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
@@ -79,7 +79,7 @@ const Settings = () => {
             </div>
             {backgroundImage && (
                 <div className="mb-4">
-                    <p className="text-xs text-gray-500 mb-2">Preview:</p>
+                    <p className="text-xs text-gray-500 mb-2">预览：</p>
                     <div className="w-full h-32 rounded-lg overflow-hidden border border-gray-600 relative">
                         <img src={backgroundImage} alt="Preview" className="w-full h-full object-cover" />
                     </div>
@@ -89,17 +89,17 @@ const Settings = () => {
               type="submit"
               className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"
             >
-              Save Appearance
+              保存外观设置
             </button>
           </form>
         </section>
 
         {/* Password Section */}
         <section className="bg-gray-800 p-6 rounded-xl border border-gray-700">
-          <h3 className="text-lg font-semibold text-white mb-4">Security</h3>
+          <h3 className="text-lg font-semibold text-white mb-4">安全设置</h3>
           <form onSubmit={handlePasswordChange} className="max-w-xl space-y-4">
             <div>
-              <label className="block text-gray-400 mb-2 text-sm">Current Password</label>
+              <label className="block text-gray-400 mb-2 text-sm">当前密码</label>
               <input 
                 type="password" 
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
@@ -109,7 +109,7 @@ const Settings = () => {
               />
             </div>
             <div>
-              <label className="block text-gray-400 mb-2 text-sm">New Password</label>
+              <label className="block text-gray-400 mb-2 text-sm">新密码</label>
               <input 
                 type="password" 
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
@@ -119,7 +119,7 @@ const Settings = () => {
               />
             </div>
             <div>
-              <label className="block text-gray-400 mb-2 text-sm">Confirm New Password</label>
+              <label className="block text-gray-400 mb-2 text-sm">确认新密码</label>
               <input 
                 type="password" 
                 className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2.5 text-white focus:outline-none focus:border-blue-500"
@@ -132,7 +132,7 @@ const Settings = () => {
               type="submit"
               className="bg-red-600 hover:bg-red-700 text-white px-6 py-2 rounded-lg transition-colors mt-2"
             >
-              Change Password
+              修改密码
             </button>
           </form>
         </section>
