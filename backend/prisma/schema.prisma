@@ -1,0 +1,41 @@
+// backend/prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String
+}
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String
+  sortOrder Int      @default(0)
+  createdAt DateTime @default(now())
+  tags      Tag[]
+}
+
+model Tag {
+  id          Int      @id @default(autoincrement())
+  name        String
+  url         String
+  logo        String?  // URL to the logo image
+  description String?
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  
+  categoryId  Int
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+model Setting {
+  id    String @id // Use key as ID for simple key-value store
+  value String
+}
