@@ -104,6 +104,7 @@ const Tags = () => {
               <th className="p-4 font-medium">名称</th>
               <th className="p-4 font-medium">所属分类</th>
               <th className="p-4 font-medium">链接</th>
+              <th className="p-4 font-medium w-24">权重</th>
               <th className="p-4 font-medium w-48 text-right">操作</th>
             </tr>
           </thead>
@@ -127,6 +128,7 @@ const Tags = () => {
                 <td className="p-4 text-blue-400 truncate max-w-[200px] hover:underline">
                     <a href={tag.url} target="_blank" rel="noopener noreferrer">{tag.url}</a>
                 </td>
+                <td className="p-4 text-gray-400">{tag.sortOrder}</td>
                 <td className="p-4 text-right">
                   <div className="flex items-center justify-end gap-2">
                     <button 
@@ -147,7 +149,7 @@ const Tags = () => {
             ))}
              {tags.length === 0 && (
                 <tr>
-                    <td colSpan="5" className="p-8 text-center text-gray-500">暂无标签</td>
+                    <td colSpan="6" className="p-8 text-center text-gray-500">暂无标签</td>
                 </tr>
             )}
           </tbody>
