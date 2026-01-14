@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path'); // Import path
 const { PrismaClient } = require('@prisma/client');
 require('dotenv').config();
 
@@ -21,9 +22,13 @@ app.use('/api/categories', categoriesRoutes);
 app.use('/api/tags', tagsRoutes);
 app.use('/api/settings', settingsRoutes);
 
-// Health check
-app.get('/', (req, res) => {
-  res.send('Nu-Nav Backend is running');
+// --- Serve Frontend Static Files (Production) ---
+const frontendPath = path.join(__dirname, '../frontend/dist');
+app.use(express.static(frontendPath));
+
+// Handle SPA routing: return index.html for any unknown route
+app.get('*', (req, res) => {
+  res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // Global error handler
