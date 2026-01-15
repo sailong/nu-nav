@@ -2,16 +2,27 @@ import React, { useEffect, useState } from 'react';
 import api from '../../api';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { Search, Plus, Trash2, RefreshCcw } from 'lucide-react';
+
+const DEFAULT_ENGINES = [
+  { name: '站内', url: '', placeholder: '搜索书签...', color: 'blue' },
+  { name: 'Google', url: 'https://www.google.com/search?q=', placeholder: 'Google 搜索', color: 'red' },
+  { name: 'Bing', url: 'https://www.bing.com/search?q=', placeholder: 'Bing 搜索', color: 'teal' },
+  { name: '百度', url: 'https://www.baidu.com/s?wd=', placeholder: '百度一下', color: 'blue' },
+];
 
 const Settings = () => {
   const [backgroundImage, setBackgroundImage] = useState('');
   const [systemTitle, setSystemTitle] = useState('');
   const [faviconUrl, setFaviconUrl] = useState('');
+  const [searchEngines, setSearchEngines] = useState([]);
+  
   const [passwordData, setPasswordData] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
   const [message, setMessage] = useState({ type: '', text: '' });
   
   const [loading, setLoading] = useState(false);
   const [passwordLoading, setPasswordLoading] = useState(false);
+  const [enginesLoading, setEnginesLoading] = useState(false);
   
   const { logout } = useAuth();
   const navigate = useNavigate();
@@ -26,6 +37,17 @@ const Settings = () => {
       if (res.data.backgroundImage) setBackgroundImage(res.data.backgroundImage);
       if (res.data.systemTitle) setSystemTitle(res.data.systemTitle);
       if (res.data.faviconUrl) setFaviconUrl(res.data.faviconUrl);
+      
+      if (res.data.searchEngines) {
+        try {
+            setSearchEngines(JSON.parse(res.data.searchEngines));
+        } catch (e) {
+            console.error("Failed to parse search engines", e);
+            setSearchEngines(DEFAULT_ENGINES);
+        }
+      } else {
+        setSearchEngines(DEFAULT_ENGINES);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -50,6 +72,25 @@ const Settings = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleEnginesSave = async (e) => {
+      e.preventDefault();
+      setEnginesLoading(true);
+      try {
+          // Filter out empty engines if any, but "站内" url is null/empty so be careful
+          // We assume engines are valid from UI
+          const enginesJson = JSON.stringify(searchEngines);
+          await api.post('/settings', [
+              { key: 'searchEngines', value: enginesJson }
+          ]);
+          showMessage('success', '搜索引擎设置更新成功');
+      } catch (error) {
+          console.error(error);
+          showMessage('error', '保存搜索引擎失败');
+      } finally {
+          setEnginesLoading(false);
+      }
   };
 
   const handlePasswordChange = async (e) => {
@@ -101,8 +142,25 @@ const Settings = () => {
     setTimeout(() => setMessage({ type: '', text: '' }), 3000);
   };
 
+  // Engine Helpers
+  const addEngine = () => {
+      setSearchEngines([...searchEngines, { name: 'New Engine', url: 'https://', placeholder: 'Search...', color: 'gray' }]);
+  };
+
+  const removeEngine = (index) => {
+      const newEngines = [...searchEngines];
+      newEngines.splice(index, 1);
+      setSearchEngines(newEngines);
+  };
+
+  const updateEngine = (index, field, value) => {
+      const newEngines = [...searchEngines];
+      newEngines[index] = { ...newEngines[index], [field]: value };
+      setSearchEngines(newEngines);
+  };
+
   return (
-    <div className="max-w-4xl relative">
+    <div className="max-w-4xl relative pb-20">
       <h2 className="text-2xl font-bold text-white mb-8">系统设置</h2>
 
       {message.text && (
@@ -175,6 +233,87 @@ const Settings = () => {
               {loading ? '保存中...' : '保存基本设置'}
             </button>
           </form>
+        </section>
+
+        {/* Search Engines Section */}
+        <section className="bg-gray-800 p-6 rounded-xl border border-gray-700">
+            <div className="flex justify-between items-center mb-6">
+                <h3 className="text-lg font-semibold text-white">搜索引擎设置</h3>
+                <button 
+                    type="button"
+                    onClick={() => setSearchEngines(DEFAULT_ENGINES)}
+                    className="text-gray-400 hover:text-white text-sm flex items-center gap-1 transition-colors"
+                >
+                    <RefreshCcw className="w-4 h-4" /> 重置默认
+                </button>
+            </div>
+            
+            <form onSubmit={handleEnginesSave} className="space-y-4">
+                <div className="space-y-3">
+                    {searchEngines.map((eng, index) => (
+                        <div key={index} className="flex flex-col md:flex-row gap-3 bg-gray-700/50 p-3 rounded-lg border border-gray-600/50">
+                             <div className="w-full md:w-1/4">
+                                <label className="text-xs text-gray-500 mb-1 block">名称</label>
+                                <input 
+                                    type="text" 
+                                    className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm text-white focus:border-blue-500 focus:outline-none"
+                                    value={eng.name}
+                                    onChange={(e) => updateEngine(index, 'name', e.target.value)}
+                                    placeholder="名称"
+                                />
+                             </div>
+                             <div className="w-full md:w-5/12">
+                                <label className="text-xs text-gray-500 mb-1 block">搜索 URL (留空为站内搜索)</label>
+                                <input 
+                                    type="text" 
+                                    className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm text-white focus:border-blue-500 focus:outline-none"
+                                    value={eng.url || ''}
+                                    onChange={(e) => updateEngine(index, 'url', e.target.value)}
+                                    placeholder="https://example.com/s?q="
+                                />
+                             </div>
+                             <div className="w-full md:w-1/4">
+                                <label className="text-xs text-gray-500 mb-1 block">占位符文本</label>
+                                <input 
+                                    type="text" 
+                                    className="w-full bg-gray-700 border border-gray-600 rounded px-2 py-1.5 text-sm text-white focus:border-blue-500 focus:outline-none"
+                                    value={eng.placeholder || ''}
+                                    onChange={(e) => updateEngine(index, 'placeholder', e.target.value)}
+                                    placeholder="输入搜索内容..."
+                                />
+                             </div>
+                             <div className="flex items-end pb-1.5">
+                                 <button
+                                    type="button"
+                                    onClick={() => removeEngine(index)}
+                                    className="p-2 text-red-400 hover:bg-red-500/10 rounded transition-colors"
+                                    title="删除"
+                                 >
+                                     <Trash2 className="w-4 h-4" />
+                                 </button>
+                             </div>
+                        </div>
+                    ))}
+                </div>
+
+                <div className="flex gap-4 pt-2">
+                    <button 
+                        type="button"
+                        onClick={addEngine}
+                        className="px-4 py-2 border border-dashed border-gray-500 text-gray-400 rounded-lg hover:border-gray-300 hover:text-white transition-colors flex items-center gap-2 text-sm"
+                    >
+                        <Plus className="w-4 h-4" /> 添加搜索引擎
+                    </button>
+                    
+                    <button 
+                        type="submit"
+                        disabled={enginesLoading}
+                        className={`bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors flex items-center gap-2 ml-auto ${enginesLoading ? 'opacity-70 cursor-not-allowed' : ''}`}
+                    >
+                        {enginesLoading ? '保存中...' : '保存搜索引擎配置'}
+                    </button>
+                </div>
+            </form>
         </section>
 
         {/* Password Section */}

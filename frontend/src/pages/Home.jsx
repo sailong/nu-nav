@@ -63,6 +63,15 @@ const Home = () => {
 
   const bgImage = settings.backgroundImage || 'https://images.unsplash.com/photo-1477346611705-65d1883cee1e?auto=format&fit=crop&q=80&w=2070';
   const systemTitle = settings.systemTitle || 'Nu-Nav';
+  
+  let parsedEngines = [];
+  try {
+    if (settings.searchEngines) {
+        parsedEngines = JSON.parse(settings.searchEngines);
+    }
+  } catch (e) {
+    console.error("Failed to parse search engines", e);
+  }
 
   return (
     <div 
@@ -111,7 +120,7 @@ const Home = () => {
 
             {/* Main Content Area */}
             <div className="flex-1 max-w-5xl">
-                <SearchBar onLocalSearch={setFilter} />
+                <SearchBar onLocalSearch={setFilter} engines={parsedEngines} />
 
                 <div className="space-y-16 mt-8">
                   {filteredCategories.map(category => (

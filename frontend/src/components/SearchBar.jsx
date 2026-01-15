@@ -8,10 +8,18 @@ const ENGINES = [
   { name: '百度', url: 'https://www.baidu.com/s?wd=', placeholder: '百度一下', color: 'blue' },
 ];
 
-const SearchBar = ({ onLocalSearch }) => {
-  const [engine, setEngine] = useState(ENGINES[0]);
+const SearchBar = ({ onLocalSearch, engines = [] }) => {
+  const activeEngines = engines.length > 0 ? engines : ENGINES;
+  const [engine, setEngine] = useState(activeEngines[0]);
   const [query, setQuery] = useState('');
   const [isFocused, setIsFocused] = useState(false);
+
+  // Update engine if the list changes (e.g. from props) and current selection is invalid
+  React.useEffect(() => {
+     if (activeEngines.length > 0 && !activeEngines.find(e => e.name === engine.name)) {
+         setEngine(activeEngines[0]);
+     }
+  }, [activeEngines, engine]);
 
   const handleSearch = (e) => {
     e.preventDefault();
@@ -39,8 +47,8 @@ const SearchBar = ({ onLocalSearch }) => {
 
   return (
     <div className={`w-full max-w-3xl mx-auto mb-12 transition-all duration-500 transform ${isFocused ? 'scale-[1.02]' : 'scale-100'}`}>
-      <div className="flex justify-center gap-2 mb-4">
-        {ENGINES.map((eng) => (
+      <div className="flex justify-center gap-2 mb-4 flex-wrap">
+        {activeEngines.map((eng) => (
           <button
             key={eng.name}
             onClick={() => {
