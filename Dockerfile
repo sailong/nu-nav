@@ -10,7 +10,7 @@ RUN npm run build
 FROM public.ecr.aws/docker/library/node:20-alpine
 
 # 安装 Nginx 和 Supervisord
-RUN apk add --no-cache nginx supervisor
+RUN apk add --no-cache nginx supervisor openssl
 
 WORKDIR /app
 
