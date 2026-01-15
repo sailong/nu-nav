@@ -74,4 +74,4 @@ echo -e "\n${GREEN}=== 🎉 镜像构建成功！ ===${NC}"
 echo "镜像地址: $IMAGE_NAME"
 echo -e "\n您可以运行以下命令启动服务:"
 echo "docker run -d -p 80:80 -v \
-$(pwd)/nu-nav-data:/app/backend/prisma -e DATABASE_URL=file:/app/backend/prisma/dev.db $IMAGE_NAME"
+$(pwd)/data:/app/data -e DATABASE_URL=file:/app/data/dev.db $IMAGE_NAME"
